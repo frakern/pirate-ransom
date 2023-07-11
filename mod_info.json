@@ -1,0 +1,8 @@
+{
+	"id":"pirate_ransom",
+	"name":"Pirate Ransom",
+	"author":"Frakern",
+	"version":"v1.0",
+	"description":"Option to pay ransom to Pirate fleets to avoid combat.",
+	"gameVersion":"0.96a-RC10",
+}
