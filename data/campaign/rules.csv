@@ -2,15 +2,16 @@ id,trigger,conditions,script,text,options,notes
 # Pirate Ransom,,,,,,
 PirateRansomCheck,BeginFleetEncounter,"$faction.id == pirates score:100
 #RepIsAtWorst $faction.id HOSTILE
-!$ignorePlayerCommRequests
+#!$ignorePlayerCommRequests
 !$Pirate_ransomAskedFor
-#$relativeStrength >= 0
+!$lowRepImpact_tTrap
+$relativeStrength >= 0
 LPTitheCalc","$Pirate_ransomConv = true 0
 $Pirate_ransomAskedFor = true 7
 AddText ""You're being hailed by the $faction $otherShipOrFleet."" $faction.baseColor
 $hailing = true 0",,,
 PirateRansomPre,OpenCommLink,$entity.Pirate_ransomConv score:100,"SetTextHighlights $entity.LP_titheDGS
-$entity.ignorePlayerCommRequests = true 1
+#$entity.ignorePlayerCommRequests = true 1
 FireAll PirateRansomOptions","""Attention, prey. Any resisting ship will be disabled, boarded, your officers massacred, and your crew sold as slaves. Transfer $entity.LP_titheDGS credits or face the consequences!""
 OR
 ""Attention, prey. Any resisting ship will be disabled, boarded, your officers massacred, and your crew sold as slaves. Transfer $entity.LP_titheDGS credits or face the consequences!""
@@ -37,21 +38,15 @@ The open comms-line crackles; after a moment the pirate $personRank speaks.
 
 ""Wait, someone actually answered this thing? Um. I'm not really sure what to say. Usually they just fight or run.
 
-So, how about this: you give me $entity.LP_titheDGS credits and I let you live. Deal?""
-OR
-""Greetings good $playerSirOrMadam. $personName at your service. To whom have I the honor of speaking?""
-
-You tensely exchange pleasantries for a few moments with the pirate $personRank.
-
-""And now that is out of the way, I'm afraid we must get on to the more regrettable stage of our brief acquaintance.
-
-Power down your weapons, $playerSirOrMadam, and transfer over $entity.LP_titheDGS credits, if you please.""",,
+So, how about this: you give me $entity.LP_titheDGS credits and I let you live. Deal?""",,
 PirateRansomNormal,PirateRansomOptions,,,,5:payRansom:Pay the ransom,
 PirateRansomCutComms,PirateRansomOptions,,,,100:cutCommLink:Cut the comm link,
 PirateRansomPay,DialogOptionSelected,$option == payRansom,"#AddText ""Lost $entity.LP_tithe credits"" textEnemyColor
 AddRemoveCommodity credits -$entity.LP_tithe true
 $entity.Pirate_ransomPaid = true 30
 MakeOtherFleetNonHostile Pirate_ransom true 30
+MakeOtherFleetAllowDisengage Pirate_ransom true 30
+MakeOtherFleetNonAggressive Pirate_ransom true 30
 AddText ""The connection is cut before you have a chance to respond.""
 ShowDefaultVisual
 EndConversation","""Wise decision. Maybe you're not a half-brained grounder after all.""
@@ -65,4 +60,46 @@ OR
 ""What you waiting for? Be on your way before I change my mind.""
 OR
 A cruel smile crosses the face of $personName and the pirate fleet allows you to disengage",,
+,,,,,,
+# Pirate Ransom tTrap,,,,,,
+PirateRansomTrapCheck,BeginFleetEncounter,"$faction.id == pirates score:100
+#RepIsAtWorst $faction.id HOSTILE
+!$ignorePlayerCommRequests
+!$Pirate_ransomAskedFor
+$lowRepImpact_tTrap
+LPTitheCalc","$Pirate_ransomConvTrap = true 0
+$Pirate_ransomAskedFor = true 7
+AddText ""You're being hailed by the $faction $otherShipOrFleet."" $faction.baseColor
+$hailing = true 0",,,
+PirateRansomTrapPre,OpenCommLink,$entity.Pirate_ransomConvTrap score:100,"SetTextHighlights $entity.LP_titheDGS
+$entity.ignorePlayerCommRequests = true 1
+FireAll PirateRansomTrapOptions","""I see you, little fish!
+
+Transfer over $entity.LP_titheDGS credits or you're gonna find yourself floating back to the core worlds!""
+OR
+""Well, well. Normally this is when I'd start shooting, but I seem to be having a change of heart.
+
+So, how about this: you give me $entity.LP_titheDGS credits, and I let you live. And, since I'm in a generous mood, you can also keep your $shipOrFleet. How about it? Think fast.""
+OR
+""Greetings good $playerSirOrMadam. $personName at your service. To whom have I the honor of speaking?""
+
+You tensely exchange pleasantries for a few moments with the pirate $personRank.
+
+""And now that is out of the way, I'm afraid we must get on to the more regrettable stage of our brief acquaintance.
+
+Power down your weapons, $playerSirOrMadam, and transfer over $entity.LP_titheDGS credits, if you please.""",,
+PirateRansomTrapNormal,PirateRansomTrapOptions,,,,5:payRansom:Pay the ransom,
+PirateRansomTrapCutComms,PirateRansomTrapOptions,,,,100:cutCommLink:Cut the comm link,
+PirateRansomTrapPay,DialogOptionSelected,$option == payRansom,"#AddText ""Lost $entity.LP_tithe credits"" textEnemyColor
+AddRemoveCommodity credits -$entity.LP_tithe true
+$entity.Pirate_ransomPaid = true 30
+GiveOtherFleetAssignment STANDING_DOWN 30
+MakeOtherFleetNonHostile Pirate_ransom true 30
+MakeOtherFleetAllowDisengage Pirate_ransom true 30
+MakeOtherFleetNonAggressive Pirate_ransom true 30
+AddText ""The connection is cut before you have a chance to respond.""
+ShowDefaultVisual
+EndConversation","""What you waiting for? Be on your way before I change my mind.""
+OR
+"$personName gives you a weak salute and the pirate fleet allows you to disengage"",,
 ,,,,,,
